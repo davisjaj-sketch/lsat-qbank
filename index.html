@@ -344,6 +344,13 @@ var TYPES = ['Main Conclusion','Necessary Assumption','Sufficient Assumption','S
 function renderAdd() {
   var el = document.getElementById('pane-add');
   el.innerHTML =
+    '<div class="card" style="margin-bottom:12px">'+
+    '<div class="section-title">Paste from Claude</div>'+
+    '<p style="font-size:13px;color:var(--text2);margin-bottom:10px">Paste the formatted text Claude gives you, then click Auto-fill.</p>'+
+    '<textarea id="f-paste" style="min-height:120px;width:100%;font-family:inherit;font-size:13px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:8px 10px;color:var(--text)" placeholder="Paste Claude\'s output here…"></textarea>'+
+    '<div class="btn-row" style="margin-top:10px">'+
+    '<button class="btn btn-primary" onclick="autofill()">Auto-fill ↓</button>'+
+    '<span id="paste-msg" style="font-size:13px"></span></div></div>'+
     '<div class="card">'+
     '<div class="section-title">Question details</div>'+
     '<div class="row3 mb12">'+
@@ -365,6 +372,51 @@ function renderAdd() {
     '<div class="btn-row">'+
     '<button class="btn btn-primary" onclick="addQ()">Save question</button>'+
     '<span id="add-msg"></span></div></div>';
+}
+
+function autofill() {
+  var raw = document.getElementById('f-paste').value;
+  var msg = document.getElementById('paste-msg');
+  if (!raw.trim()) { msg.style.color='var(--red-text)'; msg.textContent='Nothing to parse.'; return; }
+
+  function extract(label) {
+    var re = new RegExp('\\*\\*'+label+':\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|$)');
+    var m = raw.match(re);
+    return m ? m[1].trim() : '';
+  }
+
+  function extractChoice(letter) {
+    var re = new RegExp('\\*\\*'+letter+':\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*[A-E]:|\\n\\*\\*Correct|$)');
+    var m = raw.match(re);
+    return m ? m[1].trim() : '';
+  }
+
+  var stimulus = extract('Stimulus');
+  var stem = extract('Question stem');
+  var correct = extract('Correct answer').replace(/[^A-E]/g,'');
+  var qtype = extract('Question type');
+
+  if (stimulus) document.getElementById('f-stimulus').value = stimulus;
+  if (stem) document.getElementById('f-stem').value = stem;
+  if (qtype) {
+    var tsel = document.getElementById('f-type');
+    for (var i=0; i<tsel.options.length; i++) {
+      if (tsel.options[i].value === qtype) { tsel.selectedIndex = i; break; }
+    }
+  }
+  ['A','B','C','D','E'].forEach(function(k){
+    var v = extractChoice(k);
+    if (v) document.getElementById('f-c'+k).value = v;
+  });
+  if (correct) {
+    var sel = document.getElementById('f-correct');
+    for (var i=0; i<sel.options.length; i++) {
+      if (sel.options[i].value === correct) { sel.selectedIndex = i; break; }
+    }
+  }
+
+  msg.style.color='var(--green-text)';
+  msg.textContent = 'Fields populated — fill in PT, section, Q#, and type, then save.';
 }
 
 function addQ() {
