@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LSAT Question Bank</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff;
+    --bg2: #f5f5f3;
+    --bg3: #efefed;
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #9b9b96;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.2);
+    --green-bg: #eaf3de;
+    --green-text: #3b6d11;
+    --green-border: rgba(59,109,17,0.3);
+    --red-bg: #fcebeb;
+    --red-text: #a32d2d;
+    --red-border: rgba(163,45,45,0.3);
+    --blue-bg: #e6f1fb;
+    --blue-text: #185fa5;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1c;
+      --bg2: #2a2a28;
+      --bg3: #333331;
+      --text: #f0f0ee;
+      --text2: #a0a09c;
+      --text3: #6b6b67;
+      --border: rgba(255,255,255,0.1);
+      --border2: rgba(255,255,255,0.2);
+      --green-bg: #173404;
+      --green-text: #c0dd97;
+      --green-border: rgba(192,221,151,0.3);
+      --red-bg: #501313;
+      --red-text: #f09595;
+      --red-border: rgba(240,149,149,0.3);
+      --blue-bg: #042c53;
+      --blue-text: #85b7eb;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
+  .container { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  h1 { font-size: 20px; font-weight: 500; margin-bottom: 1.5rem; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 1.5rem; background: var(--bg2); border-radius: var(--radius-lg); padding: 4px; }
+  .tab { flex: 1; background: none; border: none; padding: 8px 12px; font-size: 14px; color: var(--text2); cursor: pointer; border-radius: var(--radius); font-family: inherit; }
+  .tab.active { background: var(--bg); color: var(--text); font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .pane { display: none; }
+  .pane.active { display: block; }
+  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+  label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 5px; }
+  input[type=text], textarea, select {
+    width: 100%; font-family: inherit; font-size: 14px; color: var(--text);
+    background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius);
+    padding: 8px 10px; outline: none;
+  }
+  input[type=text]:focus, textarea:focus, select:focus { border-color: var(--border2); }
+  textarea { min-height: 90px; resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .mb12 { margin-bottom: 12px; }
+  .btn { background: none; border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 8px 16px; font-size: 14px; font-family: inherit; cursor: pointer; color: var(--text); }
+  .btn:hover { background: var(--bg2); }
+  .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .btn-danger { color: var(--red-text); border-color: var(--red-border); }
+  .btn-danger:hover { background: var(--red-bg); }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: var(--radius); border: 0.5px solid var(--border); color: var(--text2); background: var(--bg2); }
+  .badge-green { background: var(--green-bg); border-color: var(--green-border); color: var(--green-text); }
+  .badge-red { background: var(--red-bg); border-color: var(--red-border); color: var(--red-text); }
+  .badge-blue { background: var(--blue-bg); border-color: rgba(24,95,165,0.3); color: var(--blue-text); }
+  .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 1.5rem; }
+  .stat { background: var(--bg2); border-radius: var(--radius); padding: 10px 12px; }
+  .stat-label { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .stat-val { font-size: 24px; font-weight: 500; }
+  .choice-btn { width: 100%; text-align: left; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 14px; font-size: 14px; font-family: inherit; cursor: pointer; color: var(--text); margin-bottom: 8px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.5; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--border2); background: var(--bg3); }
+  .choice-btn:disabled { cursor: default; }
+  .choice-btn.correct { background: var(--green-bg); border-color: var(--green-border); color: var(--green-text); }
+  .choice-btn.wrong { background: var(--red-bg); border-color: var(--red-border); color: var(--red-text); }
+  .choice-key { font-weight: 600; min-width: 20px; flex-shrink: 0; }
+  .progress-wrap { height: 4px; background: var(--bg3); border-radius: 2px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--text); border-radius: 2px; transition: width 0.3s; }
+  .feedback { padding: 10px 14px; border-radius: var(--radius); margin-bottom: 12px; font-size: 14px; font-weight: 500; }
+  .feedback.correct { background: var(--green-bg); border: 0.5px solid var(--green-border); color: var(--green-text); }
+  .feedback.wrong { background: var(--red-bg); border: 0.5px solid var(--red-border); color: var(--red-text); }
+  .notes-box { font-size: 13px; color: var(--text2); padding: 8px 12px; background: var(--bg2); border-radius: var(--radius); margin-bottom: 12px; line-height: 1.5; }
+  .qbank-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+  .qbank-item:last-child { border-bottom: none; }
+  .qbank-meta { flex: 1; min-width: 0; }
+  .qbank-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .qbank-sub { font-size: 12px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .filter-btn { background: none; border: 0.5px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-family: inherit; cursor: pointer; color: var(--text2); }
+  .filter-btn.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .section-title { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+  .choice-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+  .choice-lbl { font-size: 13px; font-weight: 600; color: var(--text2); padding-top: 9px; min-width: 18px; }
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text2); font-size: 14px; }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .success-msg { font-size: 13px; color: var(--green-text); }
+  .error-msg { font-size: 13px; color: var(--red-text); }
+  .stem-text { font-size: 14px; line-height: 1.7; }
+  @media (max-width: 500px) {
+    .stat-grid { grid-template-columns: repeat(2,1fr); }
+    .row3 { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>LSAT Question Bank</h1>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('quiz')">Quiz</button>
+    <button class="tab" onclick="showTab('browse')">Browse</button>
+    <button class="tab" onclick="showTab('add')">Add</button>
+  </div>
+  <div id="pane-quiz" class="pane active"></div>
+  <div id="pane-browse" class="pane"></div>
+  <div id="pane-add" class="pane"></div>
+</div>
+
+<script>
+var STORAGE_KEY = 'lsat_qbank';
+var SEED = [
+  {id:"mqipwpzdsy9c",pt:"140",section:"1",qnum:"16",type:"Necessary Assumption",stem:"At the end of 1997 several nations stated that their oil reserves had not changed since the end of 1996. But oil reserves gradually drop as old oil fields are drained and rise suddenly as new oil fields are discovered. Therefore, oil reserves are unlikely to remain unchanged from one year to the next. So most of the nations stating that their oil reserves were unchanged are probably incorrect. Which one of the following is an assumption the argument requires?",choices:{A:"For any nation with oil reserves, it is more likely that the nation was mistaken in its statements about changes in its oil reserves than that the nation's oil reserves remained unchanged.",B:"It is likely that in 1997, in most of the nations that stated that their oil reserves were unchanged, old oil fields were drained or new oil fields were discovered, or both.",C:"During the course of 1997, the oil reserves of at least one nation not only gradually dropped but also rose suddenly.",D:"If a nation incorrectly stated at the end of 1997 that its oil reserves had not changed since the end of 1996, then during 1997 that nation drained its old oil fields and discovered new ones.",E:"If a nation's oil reserves change from one year to the next, then that nation is obligated to report the change correctly."},correct:"B",notes:"",attempts:2,correctCount:2,lastCorrect:true,added:"Jun 17"},
+  {id:"mqipw4jdwxs4",pt:"140",section:"1",qnum:"9",type:"Method of Reasoning",stem:"Records from 1850 to 1900 show that in a certain region, babies' birth weights each year varied with the success of the previous year's crops: the more successful the crops, the higher the birth weights. This indicates that the health of a newborn depends to a large extent on the amount of food available to the mother during her pregnancy. The argument proceeds by",choices:{A:"inferring from a claimed correlation between two phenomena that two other phenomena are causally connected to one another",B:"inferring from the claim that two phenomena have fluctuated together that one of those phenomena must be the sole cause of the other",C:"inferring from records concerning a past correlation between two phenomena that that correlation still exists",D:"inferring from records concerning two phenomena the existence of a common cause of the phenomena and then presenting a hypothesis about that common cause",E:"inferring the existence of one causal connection from that of another and then providing an explanation for the existence of the two causal connections"},correct:"A",notes:"",attempts:1,correctCount:0,lastCorrect:false,added:"Jun 17"},
+  {id:"mqipvode67dq",pt:"140",section:"1",qnum:"5",type:"Main Conclusion",stem:"Essayist: If Earth's population continues to grow geometrically, then in a few centuries there will be ten people for every square meter (approximately one person per square foot) of Earth's surface. Some people have claimed that this will probably not be a problem, since humans will have learned by then how to colonize other planets. This would, however, be a temporary solution at best: if the population continues to double every 30 years, and if in the year 2500 half of Earth's population emigrated to Mars, then by the year 2530 Earth would be just as crowded as it had been before the emigration. Which one of the following most accurately expresses the conclusion drawn in the essayist's argument?",choices:{A:"If Earth's population continues to grow geometrically, then in a few centuries the population density of Earth's surface will be ten people per square meter.",B:"Due to the continuing geometric growth of Earth's population, the problem of overpopulation of Earth will probably persist.",C:"If Earth's population continues to double every 30 years, and if at some point half of the population of Earth emigrated elsewhere, then after 30 years Earth would be just as crowded as it had been before the emigration.",D:"The population of Earth's surface will probably continue to grow geometrically even if temporary solutions to population growth, such as colonizing other planets, are adopted.",E:"Learning how to colonize other planets would, at best, be a temporary solution to the overcrowding of Earth."},correct:"E",notes:"",attempts:1,correctCount:1,lastCorrect:true,added:"Jun 17"}
+];
+
+var questions = [];
+var quiz = { queue: [], idx: 0, answered: false, chosen: null, session: { seen: 0, correct: 0 } };
+var activeTab = 'quiz';
+var filterType = 'all';
+
+function load() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    questions = raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(SEED));
+  } catch(e) { questions = JSON.parse(JSON.stringify(SEED)); }
+  if (!questions.length) questions = JSON.parse(JSON.stringify(SEED));
+  save();
+}
+
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(questions)); } catch(e) {}
+}
+
+function uid() { return Math.random().toString(36).slice(2,12); }
+function shuffle(a) { return [...a].sort(function(){ return Math.random()-0.5; }); }
+
+function showTab(t) {
+  activeTab = t;
+  document.querySelectorAll('.tab').forEach(function(b,i){
+    b.classList.toggle('active', ['quiz','browse','add'][i]===t);
+  });
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('pane-'+t).classList.add('active');
+  if(t==='quiz') renderQuiz();
+  if(t==='browse') renderBrowse();
+  if(t==='add') renderAdd();
+}
+
+/* ---- QUIZ ---- */
+function renderQuiz() {
+  var el = document.getElementById('pane-quiz');
+  if (!questions.length) { el.innerHTML = '<div class="empty">No questions yet — add some in the Add tab.</div>'; return; }
+  if (!quiz.queue.length) { renderHome(); return; }
+  var q = quiz.queue[quiz.idx];
+  if (!q) { renderDone(); return; }
+
+  var pct = Math.round((quiz.idx / quiz.queue.length) * 100);
+  var acc = q.attempts > 0 ? Math.round((q.correctCount / q.attempts) * 100) : null;
+
+  var shuffled = quiz.shuffledChoices;
+  var labels = ['A','B','C','D','E'];
+  var choices = shuffled.map(function(e, i) {
+    var k = e[0], v = e[1], lbl = labels[i], cls = '';
+    if (quiz.answered) {
+      if (k === q.correct) cls = 'correct';
+      else if (k === quiz.chosen) cls = 'wrong';
+    }
+    return '<button class="choice-btn '+cls+'" onclick="answer(\''+k+'\')" '+(quiz.answered?'disabled':'')+'>'+
+      '<span class="choice-key">'+lbl+'</span><span>'+v+'</span></button>';
+  }).join('');
+
+  var feedback = '';
+  if (quiz.answered) {
+    var right = quiz.chosen === q.correct;
+    feedback = '<div class="feedback '+(right?'correct':'wrong')+'">'+(right ? '✓ Correct' : '✗ Correct answer: '+q.correct)+'</div>'+
+      (q.notes ? '<div class="notes-box">'+q.notes+'</div>' : '')+
+      '<div class="btn-row">'+
+      '<button class="btn btn-primary" onclick="nextQ()">Next →</button>'+
+      '<button class="btn btn-sm" onclick="editNotes(\''+q.id+'\')">Add note</button>'+
+      '</div>';
+  }
+
+  el.innerHTML =
+    '<div style="display:flex;justify-content:space-between;margin-bottom:8px">'+
+    '<span style="font-size:13px;color:var(--text2)">'+(quiz.idx+1)+' / '+quiz.queue.length+'</span>'+
+    '<span style="font-size:13px;color:var(--text2)">Session: '+quiz.session.correct+'/'+quiz.session.seen+'</span></div>'+
+    '<div class="progress-wrap"><div class="progress-bar" style="width:'+pct+'%"></div></div>'+
+    '<div class="card" style="margin-bottom:12px">'+
+    (quiz.answered ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+
+    '<span class="badge">'+q.type+'</span>'+
+    '<span class="badge">PT '+q.pt+' · S'+q.section+' · Q'+q.qnum+'</span>'+
+    (acc!==null ? '<span class="badge '+(acc>=70?'badge-green':'badge-red')+'">'+acc+'% accuracy</span>' : '<span class="badge badge-blue">New</span>')+
+    '</div>' : '')+
+    (q.stimulus ? '<p class="stem-text" style="margin-bottom:12px">'+q.stimulus+'</p><hr style="border:none;border-top:0.5px solid var(--border);margin-bottom:12px">' : '')+
+    '<p class="stem-text" style="font-style:italic">'+q.stem+'</p></div>'+
+    choices+feedback+
+    '<div style="margin-top:16px"><button class="btn btn-sm" style="color:var(--text2)" onclick="endQuiz()">End session</button></div>';
+}
+
+function renderHome() {
+  var el = document.getElementById('pane-quiz');
+  var total = questions.length;
+  var mastered = questions.filter(function(q){ return q.attempts>=2 && q.correctCount/q.attempts>=0.8; }).length;
+  var weak = questions.filter(function(q){ return q.attempts>0 && !q.lastCorrect; }).length;
+  var unseen = questions.filter(function(q){ return q.attempts===0; }).length;
+  var types = [...new Set(questions.map(function(q){ return q.type; }))];
+  var typeButtons = types.map(function(t){
+    var n = questions.filter(function(q){ return q.type===t; }).length;
+    return '<button class="btn btn-sm" onclick="startQuiz(\'type:\'+\''+t+'\')" style="margin-bottom:6px">'+t+' ('+n+')</button>';
+  }).join('');
+  el.innerHTML =
+    '<div class="stat-grid">'+
+    '<div class="stat"><div class="stat-label">Total</div><div class="stat-val">'+total+'</div></div>'+
+    '<div class="stat"><div class="stat-label">Mastered</div><div class="stat-val" style="color:var(--green-text)">'+mastered+'</div></div>'+
+    '<div class="stat"><div class="stat-label">Need work</div><div class="stat-val" style="color:var(--red-text)">'+weak+'</div></div>'+
+    '<div class="stat"><div class="stat-label">Untried</div><div class="stat-val">'+unseen+'</div></div>'+
+    '</div>'+
+    '<div class="btn-row" style="margin-bottom:1.25rem">'+
+    '<button class="btn btn-primary" onclick="startQuiz(\'all\')">Quiz all</button>'+
+    '<button class="btn" onclick="startQuiz(\'weak\')">Focus on weak</button>'+
+    '</div>'+
+    (types.length ? '<div class="section-title">Quiz by type</div><div class="btn-row" style="flex-wrap:wrap">'+typeButtons+'</div>' : '');
+}
+
+function renderDone() {
+  var el = document.getElementById('pane-quiz');
+  var s = quiz.session;
+  var pct = s.seen > 0 ? Math.round((s.correct/s.seen)*100) : 0;
+  el.innerHTML =
+    '<div class="card" style="text-align:center;padding:2.5rem 1rem">'+
+    '<div style="font-size:40px;font-weight:500;margin-bottom:6px">'+pct+'%</div>'+
+    '<div style="color:var(--text2);margin-bottom:1.5rem">'+s.correct+' of '+s.seen+' correct this session</div>'+
+    '<div class="btn-row" style="justify-content:center">'+
+    '<button class="btn btn-primary" onclick="startQuiz(\'all\')">Quiz again</button>'+
+    '<button class="btn" onclick="endQuiz()">Home</button></div></div>';
+  quiz.queue = [];
+}
+
+function startQuiz(mode) {
+  var pool;
+  if (mode.indexOf('type:') === 0) {
+    var t = mode.slice(5);
+    pool = questions.filter(function(q){ return q.type===t; });
+  } else {
+    pool = mode==='weak' ? questions.filter(function(q){ return !q.lastCorrect; }) :
+           mode==='unseen' ? questions.filter(function(q){ return q.attempts===0; }) :
+           [...questions];
+  }
+  if (!pool.length) pool = [...questions];
+  var q0 = shuffle(pool);
+  quiz = { queue: q0, idx: 0, answered: false, chosen: null, session: { seen: 0, correct: 0 }, shuffledChoices: shuffle(Object.entries(q0[0].choices)) };
+  renderQuiz();
+}
+
+function answer(k) {
+  if (quiz.answered) return;
+  quiz.answered = true; quiz.chosen = k;
+  var q = quiz.queue[quiz.idx];
+  var right = k === q.correct;
+  quiz.session.seen++; if (right) quiz.session.correct++;
+  var orig = questions.find(function(x){ return x.id===q.id; });
+  if (orig) { orig.attempts++; if(right) orig.correctCount++; orig.lastCorrect = right; }
+  save(); renderQuiz();
+}
+
+function nextQ() {
+  quiz.idx++; quiz.answered = false; quiz.chosen = null;
+  if (quiz.idx >= quiz.queue.length) { renderDone(); return; }
+  quiz.shuffledChoices = shuffle(Object.entries(quiz.queue[quiz.idx].choices));
+  renderQuiz();
+}
+
+function endQuiz() { quiz.queue = []; renderHome(); }
+
+function editNotes(id) {
+  var q = questions.find(function(x){ return x.id===id; });
+  if (!q) return;
+  var note = prompt('Add a note for this question (e.g. pattern, trap):', q.notes||'');
+  if (note === null) return;
+  q.notes = note.trim();
+  save(); renderQuiz();
+}
+
+/* ---- BROWSE ---- */
+function renderBrowse() {
+  var el = document.getElementById('pane-browse');
+  var types = [...new Set(questions.map(function(q){ return q.type; }))];
+  var filtered = filterType==='all' ? questions : questions.filter(function(q){ return q.type===filterType; });
+
+  var filters = '<button class="filter-btn '+(filterType==='all'?'on':'')+'" onclick="setFilter(\'all\')">All ('+questions.length+')</button>';
+  types.forEach(function(t) {
+    var n = questions.filter(function(q){ return q.type===t; }).length;
+    filters += '<button class="filter-btn '+(filterType===t?'on':'')+'" onclick="setFilter(\''+t+'\')">'+t+' ('+n+')</button>';
+  });
+
+  var items = filtered.length ? filtered.map(function(q) {
+    var acc = q.attempts>0 ? q.correctCount+'/'+q.attempts+' ('+Math.round((q.correctCount/q.attempts)*100)+'%)' : 'New';
+    var bc = q.attempts===0 ? 'badge-blue' : q.lastCorrect ? 'badge-green' : 'badge-red';
+    return '<div class="qbank-item">'+
+      '<div class="qbank-meta">'+
+      '<div class="qbank-title">PT '+q.pt+' S'+q.section+' Q'+q.qnum+' — '+q.type+'</div>'+
+      '<div class="qbank-sub">'+q.stem.slice(0,85)+'…</div></div>'+
+      '<span class="badge '+bc+'" style="white-space:nowrap;margin:0 8px">'+acc+'</span>'+
+      '<button class="btn btn-sm btn-danger" onclick="deleteQ(\''+q.id+'\')">Delete</button></div>';
+  }).join('') : '<div class="empty">No questions match this filter.</div>';
+
+  el.innerHTML = '<div class="filter-row">'+filters+'</div><div class="card">'+items+'</div>';
+}
+
+function setFilter(t) { filterType = t; renderBrowse(); }
+
+function deleteQ(id) {
+  if (!confirm('Delete this question?')) return;
+  questions = questions.filter(function(q){ return q.id!==id; });
+  save(); renderBrowse();
+}
+
+/* ---- ADD ---- */
+var TYPES = ['Main Conclusion','Necessary Assumption','Sufficient Assumption','Strengthen','Weaken','Flaw','Parallel Flaw','Parallel Reasoning','Method of Reasoning','Inference','Principle/Apply','Paradox/Resolve','Point at Issue','Role of Statement','RC Main Point','RC Author\'s Attitude','RC Detail','RC Function','RC Inference'];
+
+function renderAdd() {
+  var el = document.getElementById('pane-add');
+  el.innerHTML =
+    '<div class="card">'+
+    '<div class="section-title">Question details</div>'+
+    '<div class="row3 mb12">'+
+    '<div><label>PrepTest #</label><input type="text" id="f-pt" placeholder="e.g. 140"></div>'+
+    '<div><label>Section</label><input type="text" id="f-sec" placeholder="1–4"></div>'+
+    '<div><label>Q #</label><input type="text" id="f-qnum" placeholder="e.g. 12"></div></div>'+
+    '<div class="mb12"><label>Question type</label><select id="f-type"><option value="">Select type…</option>'+
+    TYPES.map(function(t){ return '<option>'+t+'</option>'; }).join('')+'</select></div>'+
+    '<div class="mb12"><label>Stimulus</label><textarea id="f-stimulus" placeholder="Paste the passage here…" style="min-height:110px"></textarea></div>'+
+    '<div class="mb12"><label>Question stem</label><textarea id="f-stem" placeholder="e.g. Which one of the following most accurately expresses the conclusion…" style="min-height:60px"></textarea></div>'+
+    '<div class="section-title" style="margin-top:4px">Answer choices</div>'+
+    ['A','B','C','D','E'].map(function(k){
+      return '<div class="choice-row"><span class="choice-lbl">'+k+'</span><input type="text" id="f-c'+k+'" placeholder="Choice '+k+'…" style="flex:1"></div>';
+    }).join('')+
+    '<div class="row mb12" style="margin-top:8px">'+
+    '<div><label>Correct answer</label><select id="f-correct"><option value="">Select…</option>'+
+    ['A','B','C','D','E'].map(function(k){ return '<option>'+k+'</option>'; }).join('')+'</select></div>'+
+    '<div></div></div>'+
+    '<div class="btn-row">'+
+    '<button class="btn btn-primary" onclick="addQ()">Save question</button>'+
+    '<span id="add-msg"></span></div></div>';
+}
+
+function addQ() {
+  function g(id) { var el=document.getElementById(id); return el?el.value.trim():''; }
+  var pt=g('f-pt'), sec=g('f-sec'), qnum=g('f-qnum'), type=g('f-type'), stimulus=g('f-stimulus'), stem=g('f-stem'), correct=g('f-correct');
+  var msg = document.getElementById('add-msg');
+  if (!pt||!sec||!qnum||!type||!stem||!correct) {
+    if(msg){msg.className='error-msg';msg.textContent='Please fill in all required fields.';}
+    return;
+  }
+  var choices = {};
+  ['A','B','C','D','E'].forEach(function(k){ var v=g('f-c'+k); if(v) choices[k]=v; });
+  var q = {
+    id: uid(), pt: pt, section: sec, qnum: qnum, type: type, stimulus: stimulus, stem: stem,
+    choices: choices, correct: correct, notes: g('f-notes'),
+    attempts: 0, correctCount: 0, lastCorrect: false,
+    added: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})
+  };
+  questions.unshift(q);
+  save();
+  if(msg){msg.className='success-msg';msg.textContent='Saved!';}
+  renderAdd();
+  setTimeout(function(){ var m=document.getElementById('add-msg'); if(m) m.textContent=''; }, 2000);
+}
+
+load();
+renderHome();
+</script>
+</body>
+</html>
